@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Orbit test</title>
+  <link href="./style.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+  <div class="slidecontainer">
+
+    <input type="range" min="0" max="1000" value="200" class="slider" id="myRange">
+
+    <span id="slidervalue">50</span>
+
+    <div id="square" class="square"></div>
+
+  </div>
+
+  <div id="sun"></div>
+    
+  <script src="./script.js"></script>
+  <br>
+  <br>
+  <br>
+  aaa. <!--this is for filler-->
+  <button onmousedown="up=1" onmouseup="up=0">^</button>
+  <noscript>you have no javascript</noscript>
+  <br>
+  <button onmousedown="left=1" onmouseup="left=0">&lt</button>
+  <button onmousedown="down=1" onmouseup="down=0">V</button>
+  <button onmousedown="right=1" onmouseup="right=0">&gt</button>
+  
+  wasd can be used to move
+  <button onmousedown="jump()">Jump</button>
+  space can be used to jump but jump does nothing
+  <br>
+  smooth movement now added
+  <br>
+  <button onclick="mode = !mode">pause time</button>
+  <br>
+  <button onclick="makeprojectile()">projectile (B button) (not working)</button>
+  <br>
+  <button onclick="trail = !trail">trail</button>
+  <br>
+  <button onclick="removTrail()">clear trail</button>
+  
+  <div id="othersquare" class="NOTsquare"></div>
+  <div id="trailcontainer"></div>
+  <div id="projectilecontainer"></div>
+  
+  <p>make sure to click off of button to prevent space from clicking button</p>
+  <p id="stats">stats are empty</p>
+  <!--
+  This script places a badge on your repl's full-browser view back to your repl's cover
+  page. Try various colors for the theme: dark, light, red, orange, yellow, lime, green,
+  teal, blue, blurple, magenta, pink!
+  -->
+  <script src="https://replit.com/public/js/replit-badge-v2.js" theme="dark" position="bottom-right"></script>
+
+</body>
+
+</html>
