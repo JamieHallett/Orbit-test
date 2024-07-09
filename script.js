@@ -50,10 +50,10 @@ function squaredown(v) {
 }
 
 function resetSquare() {
-  thesquare.X = 75
-  thesquare.Y = 325
-  thesquare.Xvel = 0
-  thesquare.Yvel = -0.8
+  thesquare.X = sunX - 150;
+  thesquare.Y = 325;
+  thesquare.Xvel = 0;
+  thesquare.Yvel = -0.8;
 }
 
 function toggletrackMouse() {
