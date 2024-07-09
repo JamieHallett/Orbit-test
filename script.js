@@ -24,8 +24,8 @@ const projecVel = 1;
 const Mouse = {
   X : 0,
   Y : 0,
-  relX : 0, // relative to square
-  relY : 0,
+  relX : () => {return Mouse.X - thesquare.X}, // relative to square
+  relY : () => {return Mouse.Y - thesquare.Y},
 };
 let trackMouse = false;
 
@@ -68,8 +68,6 @@ function toggletrackMouse() {
 function trackmouse(event) {
   Mouse.X = event.pageX;
   Mouse.Y = event.pageY;
-  Mouse.relX = Mouse.X - thesquare.X;
-  Mouse.relY = Mouse.Y - thesquare.Y;
 }
 
 const slider = document.getElementById("myRange");
@@ -222,6 +220,7 @@ function removTrail() {
     // I also had to remove element 0, not i, from the collection - otherwise it would delete elements in an alternating pattern, which it used to do
   }
 }
+
 function removProjecs() {
   const elmnts = document.getElementById("projectilecontainer").childNodes;
   const len = elmnts.length;
@@ -257,10 +256,12 @@ function makeprojectile() {
   
   document.getElementById("projectilecontainer").appendChild(projectile);
 
-  const mousedist = Math.sqrt(Mouse.relX * Mouse.relX + Mouse.relY * Mouse.relY)
+  const MouserelX = Mouse.relX()
+  const MouserelY = Mouse.relY()
+  const mousedist = Math.sqrt(MouserelX * MouserelX + MouserelY * MouserelY)
   
-  const sin_theta = Mouse.relY / mousedist;
-  const cos_theta = Mouse.relX / mousedist;
+  const sin_theta = MouserelY / mousedist;
+  const cos_theta = MouserelX / mousedist;
   
   projectiles.push({
     id: projectileID,
