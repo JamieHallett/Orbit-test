@@ -14,6 +14,7 @@ const thesquare = {
   Yvel : 0,
   Xaccel : 0,
   Yaccel : 0,
+  thrust : 0.1,
 };
 let mode = true;
 let trail = false;
@@ -47,6 +48,18 @@ function squareup(v) {
 function squaredown(v) {
   thesquare.Y += v; //moves square down
   square.style.top = thesquare.Y - thesquare.radius + "px";
+}
+
+function propelSquare() {
+  const MouserelX = Mouse.relX();
+  const MouserelY = Mouse.relY();
+  const mousedist = Math.sqrt(MouserelX * MouserelX + MouserelY * MouserelY);
+
+  const sin_theta = MouserelY / mousedist;
+  const cos_theta = MouserelX / mousedist;
+
+  thesquare.Xvel += thesquare.thrust * cos_theta;
+  thesquare.Yvel += thesquare.thrust * sin_theta;
 }
 
 function resetSquare() {
@@ -138,7 +151,7 @@ document.addEventListener('keyup', (event) => {
       else {closeNav()};
       break;
     case "e":
-      squaretomouse();
+      propelSquare();
       break;
     case "r":
       removProjecs();
@@ -256,9 +269,9 @@ function makeprojectile() {
   
   document.getElementById("projectilecontainer").appendChild(projectile);
 
-  const MouserelX = Mouse.relX()
-  const MouserelY = Mouse.relY()
-  const mousedist = Math.sqrt(MouserelX * MouserelX + MouserelY * MouserelY)
+  const MouserelX = Mouse.relX();
+  const MouserelY = Mouse.relY();
+  const mousedist = Math.sqrt(MouserelX * MouserelX + MouserelY * MouserelY);
   
   const sin_theta = MouserelY / mousedist;
   const cos_theta = MouserelX / mousedist;
