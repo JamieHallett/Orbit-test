@@ -14,11 +14,20 @@ const thesquare = {
   Yvel : 0,
   Xaccel : 0,
   Yaccel : 0,
-}
+};
 let mode = true;
 let trail = false;
 let projectileID = 0;
 const projecRadius = 2.5;
+const projectiles = [];
+const projecVel = 1;
+const Mouse = {
+  X : 0,
+  Y : 0,
+  relX : 0, // relative to square
+  relY : 0,
+};
+let trackMouse = false;
 
 function squareleft(v) {
   thesquare.X -= v; //moves square left
@@ -38,6 +47,29 @@ function squareup(v) {
 function squaredown(v) {
   thesquare.Y += v; //moves square down
   square.style.top = thesquare.Y - thesquare.radius + "px";
+}
+
+function resetSquare() {
+  thesquare.X = 75
+  thesquare.Y = 325
+  thesquare.Xvel = 0
+  thesquare.Yvel = -0.8
+}
+
+function toggletrackMouse() {
+  trackMouse = !trackMouse;
+  if (trackMouse) {
+    document.addEventListener("mousemove", trackmouse)
+  } else {
+    document.removeEventListener("mousemove", trackmouse)
+  }
+}
+
+function trackmouse(event) {
+  Mouse.X = event.pageX;
+  Mouse.Y = event.pageY;
+  Mouse.relX = Mouse.X - thesquare.X;
+  Mouse.relY = Mouse.Y - thesquare.Y;
 }
 
 const slider = document.getElementById("myRange");
@@ -111,25 +143,28 @@ document.addEventListener('keyup', (event) => {
       squaretomouse();
       break;
     case "r":
-      removprojecs();
+      removProjecs();
       break;
+    /*
     case "v":
       makeprojectile(true);
       break;
+    */
   }
 
 }, false);
 
 function stuff() {
   movement();
-  //projectilemove();
   if (mode) {
     gravity();
+    projectilemove();
   }
   if (trail) {
     //makeprojectile();
   }
 }
+
 function gravity(obj = thesquare) { 
   //applies gravity to thesquare by default
   const Xdist = sunX - obj.X;
@@ -144,8 +179,12 @@ function gravity(obj = thesquare) {
   obj.Yvel += obj.Yaccel;
   obj.Xvel += obj.Xaccel;
   
-  squaredown(obj.Yvel);
-  squareright(obj.Xvel);
+  obj.Y += obj.Yvel;
+  obj.X += obj.Xvel;
+
+  const objstyle = obj.elem.style;
+  objstyle.top = obj.Y - obj.radius + "px";
+  objstyle.left = obj.X - obj.radius + "px";
 }
 
 function movement() { // there may be an easier way to do this
@@ -163,7 +202,6 @@ function movement() { // there may be an easier way to do this
       squaredown(squarevel);
     }
   }
-
 }
 
 function removsquare() {
@@ -184,6 +222,17 @@ function removTrail() {
     // I also had to remove element 0, not i, from the collection - otherwise it would delete elements in an alternating pattern, which it used to do
   }
 }
+function removProjecs() {
+  const elmnts = document.getElementById("projectilecontainer").childNodes;
+  const len = elmnts.length;
+  for (let i = 0; i < len; i++) {
+    //console.log(elmnts[0]);
+    elmnts[0].remove();
+
+    // just like removTrail but for projectiles
+  }
+  projectiles.splice(0, projectiles.length);
+}
 
 function makeTrail() {
   projectileID ++;
@@ -195,24 +244,52 @@ function makeTrail() {
   document.getElementById("trailcontainer").appendChild(projectile);
 }
 
+function makeprojectile() {
+  if (!trackMouse) {return}
+  
+  projectileID ++;
+  const projectile = document.createElement("div");
+  
+  projectile.className = "projectile";
+  projectile.id = projectileID
+  projectile.style.left = thesquare.X - projecRadius + "px";
+  projectile.style.top = thesquare.Y - projecRadius + "px";
+  
+  document.getElementById("projectilecontainer").appendChild(projectile);
+
+  const mousedist = Math.sqrt(Mouse.relX * Mouse.relX + Mouse.relY * Mouse.relY)
+  
+  const sin_theta = Mouse.relY / mousedist;
+  const cos_theta = Mouse.relX / mousedist;
+  
+  projectiles.push({
+    id: projectileID,
+    elem: projectile,
+    X: thesquare.X,
+    Y: thesquare.Y,
+    Xvel: cos_theta * projecVel + thesquare.Xvel,
+    Yvel: sin_theta * projecVel + thesquare.Yvel,
+    radius: projecRadius,
+  })
+}
+
 function projectilemove() {
-  const projectiles = document.getElementById("projectilecontainer").childNodes;
+  const projectileElems = document.getElementById("projectilecontainer").childNodes;
   for (let i = 0; i < projectiles.length; i++) {
     const projectile = projectiles[i];
     //console.log(projectile.style.left.slice(0, -2));
-    projectile.style.left = (Number(projectile.style.left.slice(0,-2)) + 10) + "px";
+    gravity(projectile);
     //projectile.style.top = Number(projectile.style.top) + 10 + "px";
   }
 }
 
 function updateStats() {
-  document.getElementById("stats").innerHTML = "squareX: " + thesquare.X + "<br>squareY: " + thesquare.Y + "<br>squareXvel: " + thesquare.Xvel + "<br>squareYvel: " + thesquare.Yvel + "<br>Xaccel: " + thesquare.Xaccel*100 + "<br>Yaccel: " + thesquare.Yaccel*100 + "<br>trail: " + trail + "<br>mode: " + mode + "<br>nothing: " + null ;
+  document.getElementById("stats").innerHTML = "squareX: " + thesquare.X + "<br>squareY: " + thesquare.Y + "<br>squareXvel: " + thesquare.Xvel + "<br>squareYvel: " + thesquare.Yvel + "<br>Xaccel: " + thesquare.Xaccel*100 + "<br>Yaccel: " + thesquare.Yaccel*100 + "<br>trail: " + trail + "<br>mode: " + mode + "<br>track mouse: " + trackMouse ;
 }
 
 function lowfreqstuff() {
   if (trail) {
     makeTrail();
-    //console.log("eeee")
   }
   updateStats();
 }
